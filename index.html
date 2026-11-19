@@ -4,13 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ממיר תאריך לועזי לעברי</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap">
   <style>
     :root {
-      --accent: #2563eb;
-      --accent-hover: #1d4ed8;
-      --text: #1e293b;
-      --muted: #64748b;
-      --border: #cbd5e1;
+      --page: #F5F3EE;
+      --ink: #243653;      /* title + main button */
+      --muted: #526074;    /* secondary text */
+      --gold: #B77924;     /* icons and accent bar only, never text */
+      --cream: #FFF5DF;
+      --border: #D6D1C6;
     }
     * { box-sizing: border-box; }
     body {
@@ -21,80 +23,151 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-family: system-ui, "Segoe UI", Arial, sans-serif;
-      color: var(--text);
-      background: #f1f5f9;
+      font-family: Rubik, system-ui, "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--page);
     }
-    main {
+    .card {
       width: 100%;
-      max-width: 440px;
-      padding: 32px 24px;
+      max-width: 480px;
+      padding: 32px;
       background: #fff;
       border-radius: 16px;
-      box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+      box-shadow: 0 6px 24px rgba(36, 54, 83, 0.08);
     }
-    h1 { margin: 0 0 24px; font-size: 1.5rem; text-align: center; }
-    form { display: flex; flex-direction: column; gap: 8px; }
-    label { font-weight: 600; }
+    .icon {
+      width: 20px; height: 20px; flex-shrink: 0;
+      fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+      color: var(--gold);
+    }
+
+    /* Title */
+    .title { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+    .title-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--cream); }
+    h1 { margin: 0; font-size: 28px; font-weight: 700; }
+
+    /* Form */
+    form { display: flex; flex-direction: column; gap: 20px; }
+    .field { display: flex; flex-direction: column; gap: 8px; }
+    label, legend { font-weight: 500; }
     input[type="date"] {
-      font: inherit;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
+      height: 48px; padding: 0 12px;
+      font: inherit; color: var(--ink);
+      border: 1px solid var(--border); border-radius: 10px; background: #fff;
     }
-    .checkbox { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-weight: normal; }
-    .checkbox input { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); }
-    .hint { margin-bottom: 12px; padding-inline-start: 26px; font-size: 0.85rem; color: var(--muted); }
+    fieldset { margin: 0; padding: 0; border: none; }
+    legend { padding: 0; margin-bottom: 8px; }
+    .hint { margin: 8px 0 0; font-size: 14px; color: var(--muted); }
+
+    /* Segmented control: two radios that look like one switch */
+    .segmented { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 12px; background: #EEEBE4; }
+    .segment input { position: absolute; opacity: 0; } /* hidden but still focusable */
+    .segment span {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      height: 44px; border: 1px solid transparent; border-radius: 9px;
+      color: var(--muted); cursor: pointer;
+    }
+    .segment input:checked + span { background: #fff; border-color: var(--ink); color: var(--ink); font-weight: 700; }
+
     button {
-      font: inherit;
-      font-weight: 600;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      color: #fff;
-      background: var(--accent);
-      cursor: pointer;
+      height: 48px;
+      font: inherit; font-weight: 500;
+      color: #fff; background: var(--ink);
+      border: none; border-radius: 10px; cursor: pointer;
     }
-    button:hover { background: var(--accent-hover); }
-    button:focus-visible, input:focus-visible { outline: 3px solid #93c5fd; outline-offset: 2px; }
-    /* Locked while a request is running: grey and clearly inactive. */
-    button:disabled, input:disabled { color: #94a3b8; background: #e2e8f0; cursor: not-allowed; }
-    #result {
-      margin: 24px 0 0;
-      padding: 16px 12px;
-      border: 1px solid #bfdbfe;
-      border-radius: 12px;
-      font-size: 1.15rem;
-      font-weight: 600;
-      text-align: center;
-      text-wrap: balance; /* if it wraps, split into even lines */
-      color: #1e3a8a;
-      background: #eff6ff;
+    button:hover { background: #1A2840; }
+
+    /* Keyboard focus ring */
+    button:focus-visible, input[type="date"]:focus-visible, .segment input:focus-visible + span {
+      outline: 3px solid var(--ink); outline-offset: 2px;
     }
-    /* Collapse the box when empty, but keep it rendered so aria-live still works. */
-    #result:empty { padding: 0; border: none; }
-    #result.loading { font-size: 1rem; font-weight: normal; color: var(--muted); background: #f8fafc; border-color: var(--border); }
-    #result.error { font-size: 1rem; color: #b91c1c; background: #fef2f2; border-color: #fecaca; }
-    footer { margin-top: 16px; font-size: 0.8rem; }
+
+    /* Locked while a request is running: grey and clearly inactive */
+    button:disabled, input[type="date"]:disabled { color: #9AA0A8; background: #E7E4DD; cursor: not-allowed; }
+    fieldset:disabled .segmented { opacity: 0.5; }
+    fieldset:disabled .segment span { cursor: not-allowed; }
+
+    /* Loading and error messages (not the result card) */
+    #status { margin: 24px 0 0; }
+    #status:empty { display: none; }
+    #status.loading { color: var(--muted); text-align: center; }
+    #status.error { padding: 14px 16px; border: 1px solid #E8B4AE; border-radius: 10px; color: #9B2C24; background: #FDF0EF; }
+
+    /* Result card: cream "day" theme, dark "dusk" theme after sunset */
+    .result {
+      margin-top: 24px; padding: 20px 24px;
+      border-radius: 12px; border-inline-start: 4px solid var(--gold); /* gold bar on the right in RTL */
+      background: var(--cream);
+      animation: fade-in 180ms ease-out;
+    }
+    .result-top { display: flex; justify-content: space-between; align-items: center; }
+    .result-label { margin: 0; font-size: 14px; font-weight: 500; color: var(--muted); }
+    .result-hebrew { margin: 4px 0; font-size: 32px; font-weight: 700; line-height: 1.6; } /* room for niqqud */
+    .result-context { margin: 0; color: var(--muted); }
+    .result .icon-moon, .result.dusk .icon-sun { display: none; }
+    .result.dusk .icon-moon { display: block; }
+    .result.dusk { background: #1B2A44; color: #F5F3EE; }
+    .result.dusk .result-label, .result.dusk .result-context { color: #C5CEDD; }
+    @keyframes fade-in { from { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { .result { animation: none; } }
+
+    footer { margin-top: 16px; font-size: 13px; }
     footer a { color: var(--muted); }
+
+    @media (max-width: 480px) { .card { padding: 20px; } }
   </style>
 </head>
 <body>
-  <main>
-    <h1>ממיר תאריך לועזי לעברי</h1>
+  <!-- Icons, defined once and reused with <use href="#..."> -->
+  <svg style="display: none">
+    <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+    <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+  </svg>
+
+  <main class="card">
+    <div class="title">
+      <span class="title-icon"><svg class="icon" aria-hidden="true"><use href="#icon-calendar"/></svg></span>
+      <h1>ממיר תאריכים</h1>
+    </div>
 
     <form id="converter-form">
-      <label for="gregorian-date">תאריך לועזי</label>
-      <input type="date" id="gregorian-date" required>
-      <label class="checkbox">
-        <input type="checkbox" id="after-sunset" aria-describedby="sunset-hint">
-        אחרי השקיעה
-      </label>
-      <small class="hint" id="sunset-hint">היום העברי מתחיל בשקיעה</small>
+      <div class="field">
+        <label for="gregorian-date">תאריך לועזי</label>
+        <input type="date" id="gregorian-date" required>
+      </div>
+
+      <fieldset id="sunset-fieldset" aria-describedby="sunset-hint">
+        <legend>לפני או אחרי השקיעה?</legend>
+        <div class="segmented">
+          <label class="segment">
+            <input type="radio" name="sunset" value="before" checked>
+            <span><svg class="icon" aria-hidden="true"><use href="#icon-sun"/></svg>לפני השקיעה</span>
+          </label>
+          <label class="segment">
+            <input type="radio" name="sunset" value="after" id="after-sunset">
+            <span><svg class="icon" aria-hidden="true"><use href="#icon-moon"/></svg>אחרי השקיעה</span>
+          </label>
+        </div>
+        <p class="hint" id="sunset-hint">בשקיעה מתחיל יום חדש בלוח העברי.</p>
+      </fieldset>
+
       <button type="submit" id="convert-button">המר לתאריך עברי</button>
     </form>
 
-    <p id="result" aria-live="polite"></p>
+    <!-- Everything inside is announced by screen readers when it changes. -->
+    <div aria-live="polite">
+      <p id="status"></p>
+      <section class="result" id="result" hidden>
+        <div class="result-top">
+          <p class="result-label">התאריך העברי</p>
+          <svg class="icon icon-sun" aria-hidden="true"><use href="#icon-sun"/></svg>
+          <svg class="icon icon-moon" aria-hidden="true"><use href="#icon-moon"/></svg>
+        </div>
+        <p class="result-hebrew" id="result-hebrew"></p>
+        <p class="result-context" id="result-context"></p>
+      </section>
+    </div>
   </main>
 
   <footer>
