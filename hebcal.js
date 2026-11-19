@@ -53,3 +53,6 @@ async function getHebrewDate(date, afterSunset) {
     afterSunset: data.afterSunset,
   };
 }
+
+// Lets Node tests require this file. In the browser `module` doesn't exist, so this is skipped.
+if (typeof module !== "undefined") module.exports = { buildConverterUrl, getHebrewDate };
