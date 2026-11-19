@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ממיר תאריך לועזי לעברי</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 480px; margin: 40px auto; padding: 0 16px; }
+    form { display: flex; flex-direction: column; gap: 8px; }
+    #result { margin-top: 24px; font-size: 1.5rem; min-height: 2em; }
+    footer { margin-top: 40px; font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+  <h1>ממיר תאריך לועזי לעברי</h1>
+
+  <form id="converter-form">
+    <label for="gregorian-date">תאריך לועזי</label>
+    <input type="date" id="gregorian-date" required>
+    <button type="submit">המר לתאריך עברי</button>
+  </form>
+
+  <p id="result" aria-live="polite"></p>
+
+  <footer>
+    <a href="https://www.hebcal.com">המרת תאריכים באמצעות Hebcal</a>
+  </footer>
+
+  <script src="hebcal.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
