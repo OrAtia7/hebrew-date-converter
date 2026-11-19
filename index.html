@@ -59,9 +59,9 @@
     legend { padding: 0; margin-bottom: 8px; }
     .hint { margin: 8px 0 0; font-size: 14px; color: var(--muted); }
 
-    /* Segmented control: two radios that look like one switch */
+    /* The sunset switch: two radio buttons styled to look like one switch */
     .segmented { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 12px; background: #EEEBE4; }
-    .segment input { position: absolute; opacity: 0; } /* hidden but still focusable */
+    .segment input { position: absolute; opacity: 0; } /* invisible, but the keyboard can still reach it */
     .segment span {
       display: flex; align-items: center; justify-content: center; gap: 8px;
       height: 44px; border: 1px solid transparent; border-radius: 9px;
@@ -77,23 +77,23 @@
     }
     button:hover { background: #1A2840; }
 
-    /* Keyboard focus ring */
+    /* A clear ring around the element the keyboard is on */
     button:focus-visible, input[type="date"]:focus-visible, .segment input:focus-visible + span {
       outline: 3px solid var(--ink); outline-offset: 2px;
     }
 
-    /* Locked while a request is running: grey and clearly inactive */
+    /* While we wait for the answer, the form is locked: grey, so it clearly cannot be used */
     button:disabled, input[type="date"]:disabled { color: #9AA0A8; background: #E7E4DD; cursor: not-allowed; }
     fieldset:disabled .segmented { opacity: 0.5; }
     fieldset:disabled .segment span { cursor: not-allowed; }
 
-    /* Loading and error messages (not the result card) */
+    /* The loading message and error messages (separate from the result card) */
     #status { margin: 24px 0 0; }
     #status:empty { display: none; }
     #status.loading { color: var(--muted); text-align: center; }
     #status.error { padding: 14px 16px; border: 1px solid #E8B4AE; border-radius: 10px; color: #9B2C24; background: #FDF0EF; }
 
-    /* Result card: cream "day" theme, dark "dusk" theme after sunset */
+    /* The result card: a light "day" style, and a dark "dusk" style after sunset */
     .result {
       margin-top: 24px; padding: 20px 24px;
       border-radius: 12px; border-inline-start: 4px solid var(--gold); /* gold bar on the right in RTL */
@@ -102,7 +102,7 @@
     }
     .result-top { display: flex; justify-content: space-between; align-items: center; }
     .result-label { margin: 0; font-size: 14px; font-weight: 500; color: var(--muted); }
-    .result-hebrew { margin: 4px 0; font-size: 32px; font-weight: 700; line-height: 1.6; } /* room for niqqud */
+    .result-hebrew { margin: 4px 0; font-size: 32px; font-weight: 700; line-height: 1.6; } /* extra space for the vowel marks (niqqud) */
     .result-context { margin: 0; color: var(--muted); }
     .result .icon-moon, .result.dusk .icon-sun { display: none; }
     .result.dusk .icon-moon { display: block; }
@@ -118,7 +118,7 @@
   </style>
 </head>
 <body>
-  <!-- Icons, defined once and reused with <use href="#..."> -->
+  <!-- The icons. Each one is drawn once here, and used again with <use href="#..."> -->
   <svg style="display: none">
     <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
     <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
@@ -155,7 +155,7 @@
       <button type="submit" id="convert-button">המר לתאריך עברי</button>
     </form>
 
-    <!-- Everything inside is announced by screen readers when it changes. -->
+    <!-- aria-live: when anything inside changes, screen readers read it out loud. -->
     <div aria-live="polite">
       <p id="status"></p>
       <section class="result" id="result" hidden>
