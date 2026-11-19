@@ -17,6 +17,11 @@
   <form id="converter-form">
     <label for="gregorian-date">תאריך לועזי</label>
     <input type="date" id="gregorian-date" required>
+    <label>
+      <input type="checkbox" id="after-sunset" aria-describedby="sunset-hint">
+      אחרי השקיעה
+    </label>
+    <small id="sunset-hint">היום העברי מתחיל בשקיעה</small>
     <button type="submit">המר לתאריך עברי</button>
   </form>
 
