@@ -3,6 +3,7 @@
 const form = document.getElementById('converter-form');
 const dateInput = document.getElementById('gregorian-date');
 const sunsetCheckbox = document.getElementById('after-sunset');
+const convertButton = document.getElementById('convert-button');
 const result = document.getElementById('result');
 
 // Formats a date like "2 ביוני 2011". UTC on both sides, so the user's
@@ -26,15 +27,39 @@ function describeConversion(conversion) {
   return `${label}: ${conversion.hebrew}`;
 }
 
+// Turns an error from getHebrewDate into a message for the user.
+function errorMessage(error) {
+  if (error.status === 400) {
+    return 'התאריך לא תקין. בדוק אותו ונסה שוב.';
+  }
+  if (error.name === 'TimeoutError') {
+    return 'השירות לא הגיב בזמן. נסה שוב.';
+  }
+  return 'לא הצלחנו להמיר את התאריך. בדוק את החיבור ונסה שוב.';
+}
+
+// Locks the form while a request is running, which also blocks double submits.
+function setFormDisabled(disabled) {
+  dateInput.disabled = disabled;
+  sunsetCheckbox.disabled = disabled;
+  convertButton.disabled = disabled;
+}
+
 form.addEventListener('submit', async (event) => {
   event.preventDefault(); // stop the browser from reloading the page
+
+  result.textContent = 'ממיר תאריך…';
+  setFormDisabled(true);
 
   try {
     const conversion = await getHebrewDate(dateInput.value, sunsetCheckbox.checked);
     result.textContent = describeConversion(conversion);
   } catch (error) {
     console.error(error);
-    result.textContent = 'לא הצלחנו להמיר את התאריך. נסה שוב.';
+    result.textContent = errorMessage(error);
+  } finally {
+    setFormDisabled(false); // runs after success and after failure
+    dateInput.focus(); // disabling the form dropped focus; give it back for keyboard users
   }
 });
 
