@@ -38,6 +38,12 @@ function errorMessage(error) {
   return 'לא הצלחנו להמיר את התאריך. בדוק את החיבור ונסה שוב.';
 }
 
+// Shows text in the result box. `kind` is a CSS class: '' (success), 'loading' or 'error'.
+function showResult(text, kind) {
+  result.textContent = text;
+  result.className = kind;
+}
+
 // Locks the form while a request is running, which also blocks double submits.
 function setFormDisabled(disabled) {
   dateInput.disabled = disabled;
@@ -48,15 +54,15 @@ function setFormDisabled(disabled) {
 form.addEventListener('submit', async (event) => {
   event.preventDefault(); // stop the browser from reloading the page
 
-  result.textContent = 'ממיר תאריך…';
+  showResult('ממיר תאריך…', 'loading');
   setFormDisabled(true);
 
   try {
     const conversion = await getHebrewDate(dateInput.value, sunsetCheckbox.checked);
-    result.textContent = describeConversion(conversion);
+    showResult(describeConversion(conversion), '');
   } catch (error) {
     console.error(error);
-    result.textContent = errorMessage(error);
+    showResult(errorMessage(error), 'error');
   } finally {
     setFormDisabled(false); // runs after success and after failure
     dateInput.focus(); // disabling the form dropped focus; give it back for keyboard users
@@ -65,7 +71,7 @@ form.addEventListener('submit', async (event) => {
 
 // A shown result belongs to the old inputs, so clear it as soon as they change.
 function clearResult() {
-  result.textContent = '';
+  showResult('', '');
 }
 dateInput.addEventListener('input', clearResult);
 sunsetCheckbox.addEventListener('change', clearResult);

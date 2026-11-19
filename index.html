@@ -5,27 +5,97 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ממיר תאריך לועזי לעברי</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 480px; margin: 40px auto; padding: 0 16px; }
+    :root {
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #cbd5e1;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 16px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background: #f1f5f9;
+    }
+    main {
+      width: 100%;
+      max-width: 440px;
+      padding: 32px 24px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+    }
+    h1 { margin: 0 0 24px; font-size: 1.5rem; text-align: center; }
     form { display: flex; flex-direction: column; gap: 8px; }
-    #result { margin-top: 24px; font-size: 1.5rem; min-height: 2em; }
-    footer { margin-top: 40px; font-size: 0.8rem; }
+    label { font-weight: 600; }
+    input[type="date"] {
+      font: inherit;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .checkbox { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-weight: normal; }
+    .checkbox input { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); }
+    .hint { margin-bottom: 12px; padding-inline-start: 26px; font-size: 0.85rem; color: var(--muted); }
+    button {
+      font: inherit;
+      font-weight: 600;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--accent);
+      cursor: pointer;
+    }
+    button:hover { background: var(--accent-hover); }
+    button:focus-visible, input:focus-visible { outline: 3px solid #93c5fd; outline-offset: 2px; }
+    /* Locked while a request is running: grey and clearly inactive. */
+    button:disabled, input:disabled { color: #94a3b8; background: #e2e8f0; cursor: not-allowed; }
+    #result {
+      margin: 24px 0 0;
+      padding: 16px 12px;
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      font-size: 1.15rem;
+      font-weight: 600;
+      text-align: center;
+      text-wrap: balance; /* if it wraps, split into even lines */
+      color: #1e3a8a;
+      background: #eff6ff;
+    }
+    /* Collapse the box when empty, but keep it rendered so aria-live still works. */
+    #result:empty { padding: 0; border: none; }
+    #result.loading { font-size: 1rem; font-weight: normal; color: var(--muted); background: #f8fafc; border-color: var(--border); }
+    #result.error { font-size: 1rem; color: #b91c1c; background: #fef2f2; border-color: #fecaca; }
+    footer { margin-top: 16px; font-size: 0.8rem; }
+    footer a { color: var(--muted); }
   </style>
 </head>
 <body>
-  <h1>ממיר תאריך לועזי לעברי</h1>
+  <main>
+    <h1>ממיר תאריך לועזי לעברי</h1>
 
-  <form id="converter-form">
-    <label for="gregorian-date">תאריך לועזי</label>
-    <input type="date" id="gregorian-date" required>
-    <label>
-      <input type="checkbox" id="after-sunset" aria-describedby="sunset-hint">
-      אחרי השקיעה
-    </label>
-    <small id="sunset-hint">היום העברי מתחיל בשקיעה</small>
-    <button type="submit" id="convert-button">המר לתאריך עברי</button>
-  </form>
+    <form id="converter-form">
+      <label for="gregorian-date">תאריך לועזי</label>
+      <input type="date" id="gregorian-date" required>
+      <label class="checkbox">
+        <input type="checkbox" id="after-sunset" aria-describedby="sunset-hint">
+        אחרי השקיעה
+      </label>
+      <small class="hint" id="sunset-hint">היום העברי מתחיל בשקיעה</small>
+      <button type="submit" id="convert-button">המר לתאריך עברי</button>
+    </form>
 
-  <p id="result" aria-live="polite"></p>
+    <p id="result" aria-live="polite"></p>
+  </main>
 
   <footer>
     <a href="https://www.hebcal.com">המרת תאריכים באמצעות Hebcal</a>
